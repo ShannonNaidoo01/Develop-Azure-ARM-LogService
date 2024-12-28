@@ -3,10 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "location": {
-      "value": "East US"
+      "value": "North Europe"
     },
     "storageAccountName": {
-      "value": "logservicestorage"
+      "value": "[concat('logservice', uniqueString(resourceGroup().id))]"
     },
     "appServicePlanName": {
       "value": "logservice-plan"
