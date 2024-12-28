@@ -25,7 +25,7 @@ jobs:
 
     - name: Deploy ARM Template
       run: |
-        az deployment group create --resource-group ${{ secrets.RESOURCE_GROUP_NAME }} --template-file azuredeploy.json --parameters storageAccountName=logsvc${{ env.suffix }} --parameters @azuredeploy.parameters.json
+        az deployment group create --resource-group ${{ secrets.RESOURCE_GROUP_NAME }} --template-file azuredeploy.json --parameters storageAccountName=storweqa${{ env.suffix }} --parameters @azuredeploy.parameters.json
 
     - name: Deploy Receive Log Function to Azure
       run: |

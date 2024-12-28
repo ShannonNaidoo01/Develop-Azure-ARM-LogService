@@ -5,8 +5,8 @@
     "location": {
       "value": "North Europe"
     },
-    "releaseVersion": {
-      "value": "1"  
+    "storageAccountName": {
+      "value": "storweqa001"  
     },
     "appServicePlanName": {
       "value": "logservice-plan"
