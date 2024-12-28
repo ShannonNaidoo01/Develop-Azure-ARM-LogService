@@ -19,9 +19,13 @@ jobs:
       run: |
         az group create --name ${{ secrets.RESOURCE_GROUP_NAME }} --location "East US"
 
+    - name: Generate Unique Suffix
+      id: suffix
+      run: echo "::set-output name=suffix::$(openssl rand -hex 4)"
+
     - name: Deploy ARM Template
       run: |
-        az deployment group create --resource-group ${{ secrets.RESOURCE_GROUP_NAME }} --template-file azuredeploy.json --parameters @azuredeploy.parameters.json
+        az deployment group create --resource-group ${{ secrets.RESOURCE_GROUP_NAME }} --template-file azuredeploy.json --parameters storageAccountName=logsvc${{ steps.suffix.outputs.suffix }} --parameters @azuredeploy.parameters.json
 
     - name: Get Publish Profile for Receive Log Function
       run: |

@@ -6,7 +6,7 @@
       "value": "North Europe"
     },
     "storageAccountName": {
-      "value": "[concat('logsvc', uniqueString(resourceGroup().id))]"
+      "value": "logsvc${{ secrets.UNIQUE_SUFFIX }}"
     },
     "appServicePlanName": {
       "value": "logservice-plan"
