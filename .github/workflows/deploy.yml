@@ -1,9 +1,6 @@
-name: Deploy Azure Functions
+name: Deploy to Azure
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
   deploy:

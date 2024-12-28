@@ -1,13 +1,40 @@
 {
-  "": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "resources": [
-    {
-      "type": "Microsoft.Resources/resourceGroups",
-      "apiVersion": "2021-04-01",
-      "location": "[parameters('location')]",
-      "properties": {}
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
     },
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Storage Account."
+      }
+    },
+    "appServicePlanName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the App Service Plan."
+      }
+    },
+    "functionAppNameReceiveLog": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Function App for receiving logs."
+      }
+    },
+    "functionAppNameRetrieveLog": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Function App for retrieving logs."
+      }
+    }
+  },
+  "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2021-02-01",
@@ -95,38 +122,5 @@
         }
       }
     }
-  ],
-  "parameters": {
-    "location": {
-      "type": "string",
-      "defaultValue": "[resourceGroup().location]",
-      "metadata": {
-        "description": "Location for all resources."
-      }
-    },
-    "storageAccountName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the Storage Account."
-      }
-    },
-    "appServicePlanName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the App Service Plan."
-      }
-    },
-    "functionAppNameReceiveLog": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the Function App for receiving logs."
-      }
-    },
-    "functionAppNameRetrieveLog": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the Function App for retrieving logs."
-      }
-    }
-  }
+  ]
 }
