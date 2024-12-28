@@ -6,7 +6,7 @@
       "value": "North Europe"
     },
     "storageAccountName": {
-      "value": "storweqa001"  
+      "value": "storweqa001"
     },
     "appServicePlanName": {
       "value": "logservice-plan"

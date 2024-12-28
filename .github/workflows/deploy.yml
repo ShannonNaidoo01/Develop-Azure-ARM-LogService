@@ -17,7 +17,7 @@ jobs:
 
     - name: Create Resource Group
       run: |
-        az group create --name ${{ secrets.RESOURCE_GROUP_NAME }} --location "North Europe"
+        az group create --name ${{ secrets.resourceGroup }} --location "North Europe"
 
     - name: Generate Unique Suffix
       id: suffix
@@ -25,17 +25,17 @@ jobs:
 
     - name: Deploy ARM Template
       run: |
-        az deployment group create --resource-group ${{ secrets.RESOURCE_GROUP_NAME }} --template-file azuredeploy.json --parameters storageAccountName=storweqa${{ env.suffix }} --parameters @azuredeploy.parameters.json
+        az deployment group create --resource-group ${{ secrets.resourceGroup }} --template-file azuredeploy.json --parameters storageAccountName=storweqa${{ env.suffix }} --parameters @azuredeploy.parameters.json
 
     - name: Deploy Receive Log Function to Azure
       run: |
         zip -r ReceiveLogEntry.zip ./ReceiveLogEntry
-        az functionapp deployment source config-zip -g ${{ secrets.RESOURCE_GROUP_NAME }} -n ${{ secrets.FUNCTION_APP_NAME_RECEIVE_LOG }} --src ReceiveLogEntry.zip
+        az functionapp deployment source config-zip -g ${{ secrets.resourceGroup }} -n ${{ secrets.FUNCTION_APP_NAME_RECEIVE_LOG }} --src ReceiveLogEntry.zip
 
     - name: Deploy Retrieve Log Function to Azure
       run: |
         zip -r RetrieveLogEntries.zip ./RetrieveLogEntries
-        az functionapp deployment source config-zip -g ${{ secrets.RESOURCE_GROUP_NAME }} -n ${{ secrets.FUNCTION_APP_NAME_RETRIEVE_LOG }} --src RetrieveLogEntries.zip
+        az functionapp deployment source config-zip -g ${{ secrets.resourceGroup }} -n ${{ secrets.FUNCTION_APP_NAME_RETRIEVE_LOG }} --src RetrieveLogEntries.zip
 
     - name: Debug Environment Variables
       run: |
