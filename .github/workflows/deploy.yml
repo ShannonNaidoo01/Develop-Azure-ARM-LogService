@@ -17,45 +17,27 @@ jobs:
 
     - name: Create Resource Group
       run: |
-        az group create --name ${{ secrets.RESOURCE_GROUP_NAME }} --location "East US"
+        az group create --name ${{ secrets.RESOURCE_GROUP_NAME }} --location "North Europe"
 
     - name: Generate Unique Suffix
       id: suffix
-      run: echo "::set-output name=suffix::$(openssl rand -hex 4)"
+      run: echo "suffix=$(openssl rand -hex 4)" >> $GITHUB_ENV
 
     - name: Deploy ARM Template
       run: |
-        az deployment group create --resource-group ${{ secrets.RESOURCE_GROUP_NAME }} --template-file azuredeploy.json --parameters storageAccountName=logsvc${{ steps.suffix.outputs.suffix }} --parameters @azuredeploy.parameters.json
+        az deployment group create --resource-group ${{ secrets.RESOURCE_GROUP_NAME }} --template-file azuredeploy.json --parameters storageAccountName=logsvc${{ env.suffix }} --parameters @azuredeploy.parameters.json
 
-    - name: Get Publish Profile for Receive Log Function
+    - name: Deploy Receive Log Function to Azure
       run: |
-        az webapp deployment list-publishing-profiles --name ${{ secrets.FUNCTION_APP_NAME_RECEIVE_LOG }} --resource-group ${{ secrets.RESOURCE_GROUP_NAME }} --output json > publishProfileReceiveLog.json
-        publish_profile=$(jq -r '.[0].publishProfile' publishProfileReceiveLog.json)
-        echo "PUBLISH_PROFILE_RECEIVE_LOG=\"$publish_profile\"" >> $GITHUB_ENV
+        zip -r ReceiveLogEntry.zip ./ReceiveLogEntry
+        az functionapp deployment source config-zip -g ${{ secrets.RESOURCE_GROUP_NAME }} -n ${{ secrets.FUNCTION_APP_NAME_RECEIVE_LOG }} --src ReceiveLogEntry.zip
 
-    - name: Get Publish Profile for Retrieve Log Function
+    - name: Deploy Retrieve Log Function to Azure
       run: |
-        az webapp deployment list-publishing-profiles --name ${{ secrets.FUNCTION_APP_NAME_RETRIEVE_LOG }} --resource-group ${{ secrets.RESOURCE_GROUP_NAME }} --output json > publishProfileRetrieveLog.json
-        publish_profile=$(jq -r '.[0].publishProfile' publishProfileRetrieveLog.json)
-        echo "PUBLISH_PROFILE_RETRIEVE_LOG=\"$publish_profile\"" >> $GITHUB_ENV
+        zip -r RetrieveLogEntries.zip ./RetrieveLogEntries
+        az functionapp deployment source config-zip -g ${{ secrets.RESOURCE_GROUP_NAME }} -n ${{ secrets.FUNCTION_APP_NAME_RETRIEVE_LOG }} --src RetrieveLogEntries.zip
 
     - name: Debug Environment Variables
       run: |
         echo "FUNCTION_APP_NAME_RECEIVE_LOG: ${{ secrets.FUNCTION_APP_NAME_RECEIVE_LOG }}"
-        echo "PUBLISH_PROFILE_RECEIVE_LOG: ${{ env.PUBLISH_PROFILE_RECEIVE_LOG }}"
         echo "FUNCTION_APP_NAME_RETRIEVE_LOG: ${{ secrets.FUNCTION_APP_NAME_RETRIEVE_LOG }}"
-        echo "PUBLISH_PROFILE_RETRIEVE_LOG: ${{ env.PUBLISH_PROFILE_RETRIEVE_LOG }}"
-
-    - name: Deploy Receive Log Function to Azure
-      uses: Azure/functions-action@v1
-      with:
-        app-name: ${{ secrets.FUNCTION_APP_NAME_RECEIVE_LOG }}
-        package: "./ReceiveLogEntry"
-        publish-profile: ${{ env.PUBLISH_PROFILE_RECEIVE_LOG }}
-
-    - name: Deploy Retrieve Log Function to Azure
-      uses: Azure/functions-action@v1
-      with:
-        app-name: ${{ secrets.FUNCTION_APP_NAME_RETRIEVE_LOG }}
-        package: "./RetrieveLogEntries"
-        publish-profile: ${{ env.PUBLISH_PROFILE_RETRIEVE_LOG }}

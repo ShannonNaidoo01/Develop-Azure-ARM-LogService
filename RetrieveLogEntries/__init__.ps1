@@ -1,5 +1,5 @@
 try {
-    $storageAccount = [Microsoft.Azure.Cosmos.Table.CloudStorageAccount]::Parse("<connection-string>")
+    $storageAccount = [Microsoft.Azure.Cosmos.Table.CloudStorageAccount]::Parse($env:AzureWebJobsStorage)
     $tableClient = $storageAccount.CreateCloudTableClient()
     $table = $tableClient.GetTableReference("LogTable")
 

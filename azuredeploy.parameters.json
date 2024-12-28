@@ -5,8 +5,8 @@
     "location": {
       "value": "North Europe"
     },
-    "storageAccountName": {
-      "value": "logsvc${{ secrets.UNIQUE_SUFFIX }}"
+    "releaseVersion": {
+      "value": "1"  
     },
     "appServicePlanName": {
       "value": "logservice-plan"
