@@ -26,9 +26,20 @@ jobs:
       id: suffix
       run: echo "suffix=$(openssl rand -hex 4)" >> $GITHUB_ENV
 
+    - name: Create Cosmos DB Account
+      run: |
+        cosmosDbAccountName="cosmosdb${{ env.suffix }}"
+        az cosmosdb create --name $cosmosDbAccountName --resource-group ${{ secrets.resourceGroup }} --kind GlobalDocumentDB --locations regionName='North Europe' failoverPriority=0 isZoneRedundant=False
+        echo "COSMOS_DB_ACCOUNT_NAME=$cosmosDbAccountName" >> $GITHUB_ENV
+
     - name: Deploy ARM Template
       run: |
         az deployment group create --resource-group ${{ secrets.resourceGroup }} --template-file azuredeploy.json --parameters storageAccountName=storweqa${{ env.suffix }} --parameters @azuredeploy.parameters.json
+
+    - name: Retrieve Cosmos DB Connection String
+      run: |
+        cosmosDbConnectionString=$(az cosmosdb keys list --name ${{ env.COSMOS_DB_ACCOUNT_NAME }} --resource-group ${{ secrets.resourceGroup }} --type connection-strings --query "connectionStrings[0].connectionString" -o tsv)
+        echo "COSMOS_DB_CONNECTION_STRING=$cosmosDbConnectionString" >> $GITHUB_ENV
 
     - name: Deploy Receive Log Function to Azure
       run: |
@@ -63,3 +74,15 @@ jobs:
 
     - name: View Publish Profile Retrieve Log
       run: cat publishProfileRetrieveLog.txt
+
+    - name: Upload Publish Profile Receive Log
+      uses: actions/upload-artifact@v2
+      with:
+        name: publishProfileReceiveLog
+        path: publishProfileReceiveLog.txt
+
+    - name: Upload Publish Profile Retrieve Log
+      uses: actions/upload-artifact@v2
+      with:
+        name: publishProfileRetrieveLog
+        path: publishProfileRetrieveLog.txt

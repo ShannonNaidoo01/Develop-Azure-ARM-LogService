@@ -6,7 +6,7 @@ try {
     Write-Output "Starting function execution"
 
     # Get the connection string from environment variables
-    $connectionString = $env:CosmosDBConnectionString
+    $connectionString = $env:COSMOS_DB_CONNECTION_STRING
     Write-Output "Connection string retrieved: $connectionString"
 
     # Create a Cosmos DB account context
