@@ -1,13 +1,16 @@
 name: Deploy to Azure
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v2
 
     - name: Log in to Azure
@@ -46,6 +49,9 @@ jobs:
         AZURE_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
         AZURE_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
+    - name: View Publish Profile Receive Log
+      run: cat publishProfileReceiveLog.txt
+
     - name: Get Publish Profile for Retrieve Log Function
       run: |
         az webapp deployment list-publishing-profiles --name ${{ secrets.FUNCTION_APP_NAME_RETRIEVE_LOG }} --resource-group ${{ secrets.resourceGroup }} --output tsv > publishProfileRetrieveLog.txt
@@ -55,7 +61,5 @@ jobs:
         AZURE_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
         AZURE_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
-    - name: Debug Environment Variables
-      run: |
-        echo "FUNCTION_APP_NAME_RECEIVE_LOG: ${{ secrets.FUNCTION_APP_NAME_RECEIVE_LOG }}"
-        echo "FUNCTION_APP_NAME_RETRIEVE_LOG: ${{ secrets.FUNCTION_APP_NAME_RETRIEVE_LOG }}"
+    - name: View Publish Profile Retrieve Log
+      run: cat publishProfileRetrieveLog.txt
