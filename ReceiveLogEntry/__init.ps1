@@ -1,5 +1,6 @@
 param(
-    [string]$RequestBody
+    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+    [Microsoft.Azure.WebJobs.Extensions.Http.HttpRequestContext] $req
 )
 
 try {
@@ -8,6 +9,10 @@ try {
     # Get the connection string from environment variables
     $connectionString = $env:COSMOS_DB_CONNECTION_STRING
     Write-Output "Connection string retrieved: $connectionString"
+
+    # Read the request body
+    $RequestBody = Get-Content $req.Body | Out-String
+    Write-Output "Request body: $RequestBody"
 
     # Create a Cosmos DB account context
     $storageAccount = [Microsoft.Azure.Cosmos.Table.CloudStorageAccount]::Parse($connectionString)

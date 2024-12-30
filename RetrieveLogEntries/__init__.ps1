@@ -1,4 +1,7 @@
-param()
+param(
+    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+    [Microsoft.Azure.WebJobs.Extensions.Http.HttpRequestContext] $req
+)
 
 try {
     Write-Output "Starting function execution"
