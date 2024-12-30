@@ -76,13 +76,13 @@ jobs:
       run: cat publishProfileRetrieveLog.txt
 
     - name: Upload Publish Profile Receive Log
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: publishProfileReceiveLog
         path: publishProfileReceiveLog.txt
 
     - name: Upload Publish Profile Retrieve Log
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: publishProfileRetrieveLog
         path: publishProfileRetrieveLog.txt
