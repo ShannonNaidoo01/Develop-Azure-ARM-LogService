@@ -1,6 +1,5 @@
 param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Microsoft.Azure.WebJobs.Extensions.Http.HttpRequestContext] $req
+    [Microsoft.AspNetCore.Http.HttpRequest] $req
 )
 
 try {
