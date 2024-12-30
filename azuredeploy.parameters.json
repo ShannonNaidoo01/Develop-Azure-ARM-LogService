@@ -19,6 +19,9 @@
     },
     "applicationInsightsName": {
       "value": "logservice-appinsights"
+    },
+    "cosmosDbAccountName": {
+      "value": "logservice-cosmosdb"
     }
   }
 }

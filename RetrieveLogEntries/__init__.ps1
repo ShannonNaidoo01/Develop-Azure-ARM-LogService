@@ -1,8 +1,13 @@
-try {
-    # Get the connection string from environment variables
-    $connectionString = $env:AzureWebJobsStorage
+param()
 
-    # Create a storage account context
+try {
+    Write-Output "Starting function execution"
+
+    # Get the connection string from environment variables
+    $connectionString = $env:CosmosDBConnectionString
+    Write-Output "Connection string retrieved: $connectionString"
+
+    # Create a Cosmos DB account context
     $storageAccount = [Microsoft.Azure.Cosmos.Table.CloudStorageAccount]::Parse($connectionString)
     $tableClient = $storageAccount.CreateCloudTableClient()
     $table = $tableClient.GetTableReference("LogTable")
@@ -11,9 +16,11 @@ try {
     $query = New-Object Microsoft.Azure.Cosmos.Table.TableQuery
     $query.FilterString = "PartitionKey eq 'LogEntry'"
     $logEntries = $table.ExecuteQuery($query)
+    Write-Output "Log entries retrieved: $($logEntries.Count)"
 
     # Sort the log entries by datetime in descending order and select the first 100 entries
     $sortedLogEntries = $logEntries | Sort-Object -Property { [DateTime]::Parse($_.datetime) } -Descending | Select-Object -First 100
+    Write-Output "Log entries sorted and selected"
 
     # Return the sorted log entries as JSON
     return @{
