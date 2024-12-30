@@ -16,6 +16,9 @@
     },
     "functionAppNameRetrieveLog": {
       "value": "logservice-fa-retrieve-log"
+    },
+    "applicationInsightsName": {
+      "value": "logservice-appinsights"
     }
   }
 }

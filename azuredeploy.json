@@ -32,6 +32,12 @@
       "metadata": {
         "description": "Name of the Function App for retrieving logs."
       }
+    },
+    "applicationInsightsName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Application Insights resource."
+      }
     }
   },
   "resources": [
@@ -63,6 +69,15 @@
       }
     },
     {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2015-05-01",
+      "name": "[parameters('applicationInsightsName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "Application_Type": "web"
+      }
+    },
+    {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2021-02-01",
       "name": "[parameters('functionAppNameReceiveLog')]",
@@ -87,6 +102,10 @@
             {
               "name": "FUNCTIONS_WORKER_RUNTIME",
               "value": "powershell"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId('Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
             }
           ]
         }
@@ -117,6 +136,10 @@
             {
               "name": "FUNCTIONS_WORKER_RUNTIME",
               "value": "powershell"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId('Microsoft.Insights/components', parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
             }
           ]
         }
