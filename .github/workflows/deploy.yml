@@ -1,6 +1,6 @@
 name: Deploy to Azure
 
-on: [workflow_dispatch]
+on: [push]
 
 jobs:
   deploy:
@@ -37,15 +37,9 @@ jobs:
         zip -r RetrieveLogEntries.zip ./RetrieveLogEntries
         az functionapp deployment source config-zip -g ${{ secrets.resourceGroup }} -n ${{ secrets.FUNCTION_APP_NAME_RETRIEVE_LOG }} --src RetrieveLogEntries.zip
 
-    - name: Set Environment Variables for Function App Names
-      run: |
-        echo "FUNCTION_APP_NAME_RECEIVE_LOG=$(terraform output -raw function_app_name_receive_log)" >> $GITHUB_ENV
-        echo "FUNCTION_APP_NAME_RETRIEVE_LOG=$(terraform output -raw function_app_name_retrieve_log)" >> $GITHUB_ENV
-      working-directory: ./terraform
-
     - name: Get Publish Profile for Receive Log Function
       run: |
-        az webapp deployment list-publishing-profiles --name ${{ env.FUNCTION_APP_NAME_RECEIVE_LOG }} --resource-group ${{ secrets.resourceGroup }} --output tsv > publishProfileReceiveLog.txt
+        az webapp deployment list-publishing-profiles --name ${{ secrets.FUNCTION_APP_NAME_RECEIVE_LOG }} --resource-group ${{ secrets.resourceGroup }} --output tsv > publishProfileReceiveLog.txt
       env:
         AZURE_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         AZURE_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
@@ -54,7 +48,7 @@ jobs:
 
     - name: Get Publish Profile for Retrieve Log Function
       run: |
-        az webapp deployment list-publishing-profiles --name ${{ env.FUNCTION_APP_NAME_RETRIEVE_LOG }} --resource-group ${{ secrets.resourceGroup }} --output tsv > publishProfileRetrieveLog.txt
+        az webapp deployment list-publishing-profiles --name ${{ secrets.FUNCTION_APP_NAME_RETRIEVE_LOG }} --resource-group ${{ secrets.resourceGroup }} --output tsv > publishProfileRetrieveLog.txt
       env:
         AZURE_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         AZURE_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
@@ -63,5 +57,5 @@ jobs:
 
     - name: Debug Environment Variables
       run: |
-        echo "FUNCTION_APP_NAME_RECEIVE_LOG: ${{ env.FUNCTION_APP_NAME_RECEIVE_LOG }}"
-        echo "FUNCTION_APP_NAME_RETRIEVE_LOG: ${{ env.FUNCTION_APP_NAME_RETRIEVE_LOG }}"
+        echo "FUNCTION_APP_NAME_RECEIVE_LOG: ${{ secrets.FUNCTION_APP_NAME_RECEIVE_LOG }}"
+        echo "FUNCTION_APP_NAME_RETRIEVE_LOG: ${{ secrets.FUNCTION_APP_NAME_RETRIEVE_LOG }}"
