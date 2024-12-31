@@ -1,5 +1,6 @@
 param(
-    [Microsoft.AspNetCore.Http.HttpRequest] $req
+    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+    [object] $req
 )
 
 try {
